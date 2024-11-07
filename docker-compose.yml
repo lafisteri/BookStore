@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8081:8080" # HTTP
-      - "8443:443" # HTTP
+      - "8443:443" # HTTPS
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
       - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=Library;User=myuser;Password=123456;
