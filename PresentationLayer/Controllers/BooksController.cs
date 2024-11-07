@@ -1,4 +1,5 @@
 using BusinessLayer.BooksService;
+using BusinessLayer.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PresentationLayer.Controllers
@@ -15,11 +16,24 @@ namespace PresentationLayer.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GET()
+        public async Task<IActionResult> Get(int? id)
         {
             var books = await _booksService.GetAllBooks();
 
             return Ok(books);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Add(BookDTO bookDTO)
+        {
+            var id = await _booksService.AddBook(bookDTO);
+
+            if (id != 0)
+            {
+                return Ok(id);
+            }
+
+            return BadRequest();
         }
     }
 }

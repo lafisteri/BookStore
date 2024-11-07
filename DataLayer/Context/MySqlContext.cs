@@ -7,6 +7,9 @@ public class MySqlContext : DbContext
 {
     public DbSet<Book> Books { get; set; }
 
-    public MySqlContext(DbContextOptions<MySqlContext> options) : base(options) { }
+    public MySqlContext(DbContextOptions<MySqlContext> options) : base(options)
+    {
+        Database.EnsureCreated();
+    }
 
 }
