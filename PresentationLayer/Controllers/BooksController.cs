@@ -15,18 +15,26 @@ namespace PresentationLayer.Controllers
             _booksService = bookService;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Get(int? id)
         {
-            var books = await _booksService.GetAllBooks();
+            var item = await _booksService.Get(id);
 
-            return Ok(books);
+            return Ok(item);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var items = await _booksService.GetAll();
+
+            return Ok(items);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(BookDTO bookDTO)
+        public async Task<IActionResult> Create(BookDTO bookDTO)
         {
-            var id = await _booksService.AddBook(bookDTO);
+            var id = await _booksService.Create(bookDTO);
 
             if (id != 0)
             {
@@ -34,6 +42,32 @@ namespace PresentationLayer.Controllers
             }
 
             return BadRequest();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, BookDTO bookDTO)
+        {
+            var item = await _booksService.Update(id, bookDTO);
+
+            if (item != null)
+            {
+                return Ok(item);
+            }
+
+            return BadRequest($"Phone with id {id} was not updated!");
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var item = await _booksService.Delete(id);
+
+            if (item != null)
+            {
+                return Ok(item);
+            }
+
+            return BadRequest($"Phone with id {id} was not deleted!");
         }
     }
 }

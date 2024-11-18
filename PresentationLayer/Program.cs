@@ -20,7 +20,17 @@ var assemblies = new[]
     };
 builder.Services.AddAutoMapper(assemblies);
 
+builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll", builder =>
+            builder.AllowAnyOrigin()   // For testing
+                   .AllowAnyMethod()   // For testing
+                   .AllowAnyHeader()); // For testing
+    });
+
 var app = builder.Build();
+
+app.UseCors("AllowAll"); // For testing
 
 app.MapGet("/", () => "It is alive!!");
 

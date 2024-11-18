@@ -5,7 +5,9 @@ namespace BusinessLayer.BooksService;
 
 public interface IBooksService
 {
-    Task<IEnumerable<Book>> GetAllBooks();
-
-    Task<int> AddBook(BookDTO bookDTO);
+    Task<Book> Get(int? id);
+    Task<IEnumerable<Book>> GetAll();
+    Task<int> Create(BookDTO bookDTO);
+    Task<Book> Update(int id, BookDTO bookDTO);
+    Task<Book> Delete(int id);
 }

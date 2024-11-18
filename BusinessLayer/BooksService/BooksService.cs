@@ -16,12 +16,17 @@ public class BooksService : IBooksService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<Book>> GetAllBooks()
+    public async Task<Book> Get(int? id)
     {
-        return await _booksRepository.GetAsync();
+        return await _booksRepository.GetAsync(id);
     }
 
-    public async Task<int> AddBook(BookDTO bookDTO)
+    public async Task<IEnumerable<Book>> GetAll()
+    {
+        return await _booksRepository.GetAllAsync();
+    }
+
+    public async Task<int> Create(BookDTO bookDTO)
     {
         var book = _mapper.Map<Book>(bookDTO);
 
@@ -31,5 +36,22 @@ public class BooksService : IBooksService
         }
 
         return 0;
+    }
+
+    public async Task<Book> Update(int id, BookDTO bookDTO)
+    {
+        var item = _mapper.Map<Book>(bookDTO);
+        if (item != null)
+        {
+            item.Id = id;
+            return await _booksRepository.UpdateAsync(item);
+        }
+
+        return null;
+    }
+
+    public async Task<Book> Delete(int id)
+    {
+        return await _booksRepository.DeleteAsync(id);
     }
 }
