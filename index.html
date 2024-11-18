@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookStore</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1>BookStore</h1>
+
+        <!-- Кнопки для додавання та фільтрації -->
+        <div class="mb-3">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#addBookModal">Додати книгу</button>
+            <input type="text" class="form-control d-inline w-25 ml-3" placeholder="Пошук книги" id="searchBooks">
+        </div>
+
+        <!-- Список книг -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Назва</th>
+                    <th scope="col">Автор</th>
+                    <th scope="col">Жанр</th>
+                    <th scope="col">Дії</th>
+                </tr>
+            </thead>
+            <tbody id="bookList">
+                <!-- Тут будуть відображатися книги -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Модальне вікно для додавання книги -->
+    <div class="modal fade" id="addBookModal" tabindex="-1" role="dialog" aria-labelledby="addBookModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBookModalLabel">Додати нову книгу</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addBookForm">
+                        <div class="form-group">
+                            <label for="bookTitle">Назва книги</label>
+                            <input type="text" class="form-control" id="bookTitle" placeholder="Введіть назву книги">
+                        </div>
+                        <div class="form-group">
+                            <label for="bookAuthor">Автор</label>
+                            <input type="text" class="form-control" id="bookAuthor" placeholder="Введіть автора">
+                        </div>
+                        <div class="form-group">
+                            <label for="bookGenre">Жанр</label>
+                            <input type="text" class="form-control" id="bookGenre" placeholder="Введіть жанр">
+                        </div>
+                        <div class="form-group">
+                            <label for="bookYear">Рік видання</label>
+                            <input type="number" class="form-control" id="bookYear" placeholder="Введіть рік видання">
+                        </div>
+                        <div class="form-group">
+                            <label for="bookDescription">Опис</label>
+                            <textarea class="form-control" id="bookDescription" rows="3"
+                                placeholder="Введіть опис книги"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Зберегти</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальне вікно для редагування книги -->
+    <div class="modal fade" id="editBookModal" tabindex="-1" role="dialog" aria-labelledby="editBookModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editBookModalLabel">Редагувати книгу</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editBookForm">
+                        <div class="form-group">
+                            <label for="editBookTitle">Назва книги</label>
+                            <input type="text" class="form-control" id="editBookTitle"
+                                placeholder="Введіть назву книги">
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookAuthor">Автор</label>
+                            <input type="text" class="form-control" id="editBookAuthor" placeholder="Введіть автора">
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookGenre">Жанр</label>
+                            <input type="text" class="form-control" id="editBookGenre" placeholder="Введіть жанр">
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookYear">Рік видання</label>
+                            <input type="number" class="form-control" id="editBookYear"
+                                placeholder="Введіть рік видання">
+                        </div>
+                        <div class="form-group">
+                            <label for="editBookDescription">Опис</label>
+                            <textarea class="form-control" id="editBookDescription" rows="3"
+                                placeholder="Введіть опис книги"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Оновити</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Завантаження книг із API
+        const loadBooks = async () => {
+            const response = await fetch('http://localhost:8081/api/books');
+            const books = await response.json();
+            const bookList = document.getElementById('bookList');
+            bookList.innerHTML = '';
+            books.forEach(book => {
+                bookList.innerHTML += `
+          <tr>
+            <th scope="row">${book.id}</th>
+            <td>${book.title}</td>
+            <td>${book.author}</td>
+            <td>${book.genre}</td>
+            <td>
+              <button class="btn btn-warning btn-sm" onclick="editBook(${book.id})">Редагувати</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteBook(${book.id})">Видалити</button>
+            </td>
+          </tr>
+        `;
+            });
+        };
+
+        // Функція для додавання нової книги
+        document.getElementById('addBookForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const newBook = {
+                title: document.getElementById('bookTitle').value,
+                author: document.getElementById('bookAuthor').value,
+                genre: document.getElementById('bookGenre').value,
+                year: document.getElementById('bookYear').value,
+                description: document.getElementById('bookDescription').value
+            };
+
+            const response = await fetch('http://localhost:8081/api/books', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newBook)
+            });
+
+            if (response.ok) {
+                loadBooks();  // Перезавантажуємо список книг
+                $('#addBookModal').modal('hide');  // Закриваємо модальне вікно
+            } else {
+                alert('Помилка при додаванні книги');
+            }
+        });
+
+        // Функція для редагування книги
+        const editBook = async (id) => {
+            const response = await fetch(`http://localhost:8081/api/books/${id}`);
+            const book = await response.json();
+            document.getElementById('editBookTitle').value = book.title;
+            document.getElementById('editBookAuthor').value = book.author;
+            document.getElementById('editBookGenre').value = book.genre;
+            document.getElementById('editBookYear').value = book.year;
+            document.getElementById('editBookDescription').value = book.description;
+            $('#editBookModal').modal('show');
+
+            // Заміна кнопки "Оновити"
+            const submitButton = document.querySelector('#editBookForm button');
+            submitButton.onclick = async (event) => {
+                event.preventDefault();
+                const updatedBook = {
+                    title: document.getElementById('editBookTitle').value,
+                    author: document.getElementById('editBookAuthor').value,
+                    genre: document.getElementById('editBookGenre').value,
+                    year: document.getElementById('editBookYear').value,
+                    description: document.getElementById('editBookDescription').value
+                };
+
+                const res = await fetch(`http://localhost:8081/api/books/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedBook)
+                });
+
+                if (res.ok) {
+                    loadBooks();
+                    $('#editBookModal').modal('hide');
+                } else {
+                    alert('Помилка при оновленні книги');
+                }
+            };
+        };
+
+        // Функція для видалення книги
+        const deleteBook = async (id) => {
+            const confirmDelete = confirm('Ви дійсно хочете видалити цю книгу?');
+            if (confirmDelete) {
+                const response = await fetch(`http://localhost:8081/api/books/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadBooks();
+                } else {
+                    alert('Помилка при видаленні книги');
+                }
+            }
+        };
+
+        // Завантаження книг при завантаженні сторінки
+        loadBooks();
+    </script>
+</body>
+
+</html>

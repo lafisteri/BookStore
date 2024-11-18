@@ -54,7 +54,7 @@ namespace PresentationLayer.Controllers
                 return Ok(item);
             }
 
-            return BadRequest($"Phone with id {id} was not updated!");
+            return BadRequest($"Item with id {id} was not updated!");
         }
 
         [HttpDelete("{id}")]
@@ -67,7 +67,7 @@ namespace PresentationLayer.Controllers
                 return Ok(item);
             }
 
-            return BadRequest($"Phone with id {id} was not deleted!");
+            return BadRequest($"Item with id {id} was not deleted!");
         }
     }
 }
